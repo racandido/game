@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor user
+participant PartidaController
+participant PartidaService
+participant PartidaRepository
+database MySQL
+
+==Create==
+
+user -> PartidaController: POST /partida(partidaDto)
+
+PartidaController -> PartidaService: save(partidaDto)
+
+PartidaService -> PartidaService: convertDtoToPartida
+PartidaService -> PartidaService: validateHora
+PartidaService -> PartidaRepository: save(partida)
+PartidaRepository -> MySQL:
+MySQL -> PartidaRepository:
+PartidaRepository -> PartidaService: Partida savedPartida(partida)
+PartidaService -> PartidaService: convertPartidaToDto
+PartidaService -> PartidaController: (partidaDto)
+PartidaController -> user: (partidaDto)
+
+==GET==
+
+user -> PartidaController: GET /partida/id
+
+PartidaController -> PartidaService: get(id)
+
+PartidaService -> PartidaRepository: findById
+PartidaService -> PartidaRepository: get(id)
+PartidaService -> PartidaService: convertPartidaToDto
+
+@enduml
